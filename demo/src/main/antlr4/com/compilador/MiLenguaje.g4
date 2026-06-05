@@ -45,6 +45,9 @@ sentencia
     | sentenciaCout      // cout << x;
     | sentenciaIf        // if (x > 0) { ... }
     | sentenciaWhile     // while (x < 10) { ... }
+    | sentenciaFor
+    | sentenciaBreak
+    | sentenciaContinue
     | bloque             // { ... }
     ;
 
@@ -96,6 +99,18 @@ sentenciaIf
 // Sintaxis: while (condición) { ... }
 sentenciaWhile
     : WHILE PA expresion PC bloque
+    ;
+
+sentenciaFor
+    : FOR PA declaracion expresion PYC ID IGUAL expresion PC bloque
+    ;
+
+sentenciaBreak
+    : BREAK PYC
+    ;
+
+sentenciaContinue
+    : CONTINUE PYC
     ;
 
 // BLOQUE: secuencia de sentencias entre llaves
@@ -271,7 +286,8 @@ WHILE  : 'while'  ;     // Bucle mientras
 IF     : 'if'     ;     // Selección condicional
 ELSE   : 'else'   ;     // Alternativa del if
 RETURN : 'return' ;     // Para futuras funciones
-
+BREAK    : 'break'    ;
+CONTINUE : 'continue' ;
 
 // --- PALABRAS CLAVE DE TIPOS ---
 // Tipos de datos que el mini lenguaje soporta.
