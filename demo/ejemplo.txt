@@ -1,0 +1,86 @@
+// ============================================================
+// ejemplo.txt — Programa VÁLIDO para el mini lenguaje C++
+// Este archivo demuestra todas las construcciones soportadas
+// ============================================================
+
+// --- Declaraciones de variables ---
+int x = 10;
+int y = 20;
+float pi = 3.14;
+double temperatura = 36.6;
+bool activo = true;
+bool terminado = false;
+string nombre = "Juan";
+char inicial = 'J';
+
+// --- Variable sin valor inicial ---
+int resultado;
+
+// --- Asignaciones ---
+x = x + y;
+resultado = x * 2;
+
+// --- Expresiones aritméticas ---
+int suma = x + y;
+int diferencia = x - y;
+int producto = x * y;
+int cociente = x / 2;
+int resto = x % 3;
+
+// --- Expresiones con paréntesis ---
+int complejo = (x + y) * 2;
+int otro = x + (y * 3) - 1;
+
+// --- cout: salida por pantalla ---
+cout << x;
+cout << suma;
+cout << nombre;
+cout << (x + y) * 2;
+
+// --- if simple ---
+if (x > 10) {
+    cout << x;
+}
+
+// --- if con else ---
+if (activo) {
+    cout << x;
+} else {
+    cout << y;
+}
+
+// --- if con expresión compleja ---
+if (x > 0 && y < 100) {
+    resultado = x + y;
+    cout << resultado;
+}
+
+// --- while básico ---
+while (x < 100) {
+    x = x + 1;
+}
+
+// --- while con condición compuesta ---
+while (x > 0 && activo) {
+    x = x - 1;
+    cout << x;
+}
+
+// --- Expresiones booleanas ---
+bool esPositivo = x > 0;
+bool enRango = x >= 0 && x <= 100;
+bool esCero = x == 0;
+bool noEsCero = x != 0;
+bool negacion = !activo;
+
+// --- Bloques anidados ---
+if (x > 0) {
+    int local = x * 2;
+    if (local > 50) {
+        cout << local;
+    }
+}
+
+// --- Expresión negativa ---
+int negativo = -5;
+int calculado = -(x + y);

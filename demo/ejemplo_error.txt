@@ -1,0 +1,127 @@
+// ============================================================
+// ejemplo_error.txt — Programa con ERRORES SINTÁCTICOS
+//
+// Cada bloque muestra un tipo de error distinto.
+// Descomenta uno a la vez para ver el mensaje del parser.
+//
+// INSTRUCCIÓN: comenta todos excepto el error que quieres probar.
+// ============================================================
+
+
+// ============================================================
+// ERROR 1: Falta el punto y coma al final de la declaración
+//
+// El parser espera ';' después de la expresión '10',
+// pero encuentra 'int' (inicio de la siguiente declaración).
+//
+// Mensaje esperado:
+//   [Línea 2:X] cerca de 'int' → missing ';' at 'int'
+// ============================================================
+
+int x = 10
+int y = 20;
+
+
+// ============================================================
+// ERROR 2: Falta el paréntesis de cierre en el if
+//
+// El parser espera ')' después de la condición,
+// pero encuentra '{' (inicio del bloque).
+//
+// Mensaje esperado:
+//   [Línea X:Y] cerca de '{' → missing ')' at '{'
+// ============================================================
+
+// Descomenta para probar:
+// int a = 5;
+// if (a > 0 {
+//     cout << a;
+// }
+
+
+// ============================================================
+// ERROR 3: Expresión incompleta — falta el operando derecho
+//
+// El parser espera una expresión después de '+',
+// pero encuentra ';'.
+//
+// Mensaje esperado:
+//   [Línea X:Y] cerca de ';' → mismatched input ';'
+// ============================================================
+
+// Descomenta para probar:
+// int b = 5 + ;
+
+
+// ============================================================
+// ERROR 4: Falta la llave de cierre del bloque while
+//
+// El parser espera '}' para cerrar el bloque,
+// pero llega al fin del archivo (EOF).
+//
+// Mensaje esperado:
+//   [Línea X:Y] cerca de '<EOF>' → missing '}' at '<EOF>'
+// ============================================================
+
+// Descomenta para probar:
+// int c = 0;
+// while (c < 10) {
+//     c = c + 1;
+// (falta el })
+
+
+// ============================================================
+// ERROR 5: Tipo de dato desconocido
+//
+// 'entero' no es un tipo reconocido en la gramática.
+// El parser no puede empezar ninguna regla con ese token.
+//
+// Mensaje esperado:
+//   [Línea X:Y] cerca de 'entero' → mismatched input 'entero'
+// ============================================================
+
+// Descomenta para probar:
+// entero z = 42;
+
+
+// ============================================================
+// ERROR 6: Asignación a algo que no es un identificador
+//
+// El lado izquierdo de '=' debe ser un ID,
+// pero '5' es un número (INTEGER).
+//
+// Mensaje esperado:
+//   [Línea X:Y] cerca de '=' → mismatched input '='
+// ============================================================
+
+// Descomenta para probar:
+// 5 = x;
+
+
+// ============================================================
+// ERROR 7: cout sin el operador <<
+//
+// La gramática exige 'cout << expresion ;'
+// Si falta '<<', el parser no reconoce la estructura.
+//
+// Mensaje esperado:
+//   [Línea X:Y] cerca de 'x' → mismatched input 'x'
+// ============================================================
+
+// Descomenta para probar:
+// int d = 1;
+// cout d;
+
+
+// ============================================================
+// NOTA PARA ESTUDIANTES
+//
+// Los errores sintácticos son distintos de los léxicos:
+//
+//   Error LÉXICO:    carácter no reconocido   (ej: # @ $)
+//   Error SINTÁCTICO: estructura inválida      (ej: falta ';')
+//
+// ANTLR intenta recuperarse de los errores sintácticos para
+// seguir analizando el resto del archivo. Esto permite
+// reportar múltiples errores en una sola pasada.
+// ============================================================
