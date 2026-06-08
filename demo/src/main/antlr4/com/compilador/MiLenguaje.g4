@@ -48,6 +48,8 @@ sentencia
     | sentenciaFor
     | sentenciaBreak
     | sentenciaContinue
+    | sentenciaReturn
+    | declaracionFuncion
     | bloque             // { ... }
     ;
 
@@ -63,13 +65,10 @@ declaracion
 
 // TIPOS DE DATOS disponibles en el mini lenguaje
 tipo
-    : INT          // Números enteros:   int x = 5;
-    | FLOAT        // Números decimales: float pi = 3.14;
-    | DOUBLE       // Decimal preciso:   double d = 3.14159;
-    | CHAR         // Caracteres:        char c = 'A';
-    | STRING_TYPE  // Cadenas:           string s = "hola";
-    | BOOL         // Booleanos:         bool b = true;
-    | VOID         // Sin valor (para futuras funciones)
+    : INT
+    | CHAR
+    | DOUBLE
+    | VOID
     ;
 
 // ASIGNACIÓN: nombre = expresión ;
@@ -111,6 +110,26 @@ sentenciaBreak
 
 sentenciaContinue
     : CONTINUE PYC
+    ;
+
+sentenciaReturn
+    : RETURN expresion? PYC
+    ;
+
+declaracionFuncion
+    : tipo ID PA parametros? PC bloque
+    ;
+
+parametros
+    : tipo ID (COMA tipo ID)*
+    ;
+
+llamadaFuncion
+    : ID PA argumentos? PC
+    ;
+
+argumentos
+    : expresion (COMA expresion)*
     ;
 
 // BLOQUE: secuencia de sentencias entre llaves
@@ -199,8 +218,9 @@ expresion
     | VERDADERO                                                           # exprVerdadero
     | FALSO                                                               # exprFalso
 
-    // Variable: referencia a un identificador declarado
+    | llamadaFuncion                                                      # exprLlamada
     | ID                                                                  # exprIdentificador
+
     ;
 
 
