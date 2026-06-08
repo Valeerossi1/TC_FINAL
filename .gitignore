@@ -4,9 +4,6 @@ target/
 # Archivos de clase compilados
 *.class
 
-# Archivos de configuracion local
-.claude/
-
 # Archivos de IDE
 .vscode/
 .idea/
