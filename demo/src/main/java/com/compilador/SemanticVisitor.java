@@ -162,4 +162,71 @@ public String visitExprFalso(MiLenguajeParser.ExprFalsoContext ctx) {
 
         return "int";
     }
+    @Override
+    public String visitExprRelacional(MiLenguajeParser.ExprRelacionalContext ctx) {
+        String tipoIzq = visit(ctx.expresion(0));
+        String tipoDer = visit(ctx.expresion(1));
+        int linea = ctx.getStart().getLine();
+
+        if (tipoIzq != null && tipoDer != null) {
+            boolean izqNumerico = tipoIzq.equals("int") || tipoIzq.equals("double") || tipoIzq.equals("char");
+            boolean derNumerico = tipoDer.equals("int") || tipoDer.equals("double") || tipoDer.equals("char");
+
+            if (!izqNumerico || !derNumerico) {
+                errores.add("Línea " + linea + ": no se puede comparar tipo '" + tipoIzq
+                           + "' con tipo '" + tipoDer + "'.");
+            }
+        }
+
+        return "bool";
+    }
+
+    @Override
+    public String visitExprIgualdad(MiLenguajeParser.ExprIgualdadContext ctx) {
+        String tipoIzq = visit(ctx.expresion(0));
+        String tipoDer = visit(ctx.expresion(1));
+        int linea = ctx.getStart().getLine();
+
+        if (tipoIzq != null && tipoDer != null) {
+            boolean izqNumerico = tipoIzq.equals("int") || tipoIzq.equals("double") || tipoIzq.equals("char");
+            boolean derNumerico = tipoDer.equals("int") || tipoDer.equals("double") || tipoDer.equals("char");
+            boolean ambosNumericos = izqNumerico && derNumerico;
+            boolean mismoTipo = tipoIzq.equals(tipoDer);
+
+            if (!mismoTipo && !ambosNumericos) {
+                errores.add("Línea " + linea + ": no se puede comparar tipo '" + tipoIzq
+                           + "' con tipo '" + tipoDer + "'.");
+            }
+        }
+
+        return "bool";
+    }
+
+    @Override
+    public String visitExprAnd(MiLenguajeParser.ExprAndContext ctx) {
+        return verificarOperandosBooleanos(ctx.expresion(0), ctx.expresion(1), ctx.getStart().getLine(), "&&");
+    }
+
+    @Override
+    public String visitExprOr(MiLenguajeParser.ExprOrContext ctx) {
+        return verificarOperandosBooleanos(ctx.expresion(0), ctx.expresion(1), ctx.getStart().getLine(), "||");
+    }
+
+    private String verificarOperandosBooleanos(MiLenguajeParser.ExpresionContext izq,
+                                                 MiLenguajeParser.ExpresionContext der,
+                                                 int linea, String operador) {
+        String tipoIzq = visit(izq);
+        String tipoDer = visit(der);
+
+        if (tipoIzq != null && !tipoIzq.equals("bool")) {
+            errores.add("Línea " + linea + ": el operador '" + operador
+                       + "' requiere operandos booleanos, pero se encontró '" + tipoIzq + "'.");
+        }
+        if (tipoDer != null && !tipoDer.equals("bool")) {
+            errores.add("Línea " + linea + ": el operador '" + operador
+                       + "' requiere operandos booleanos, pero se encontró '" + tipoDer + "'.");
+        }
+
+        return "bool";
+    }
 }
