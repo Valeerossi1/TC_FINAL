@@ -111,4 +111,19 @@ public String visitExprFalso(MiLenguajeParser.ExprFalsoContext ctx) {
     return "bool";
 }
     
+@Override
+    public String visitExprIdentificador(MiLenguajeParser.ExprIdentificadorContext ctx) {
+        String nombre = ctx.ID().getText();
+        int linea = ctx.ID().getSymbol().getLine();
+
+        Simbolo simbolo = tabla.buscar(nombre);
+
+        if (simbolo == null) {
+            errores.add("Línea " + linea + ": la variable '" + nombre + "' no fue declarada.");
+            return null;
+        }
+
+        return simbolo.getTipo();
+    }
+
 }
