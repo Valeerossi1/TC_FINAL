@@ -126,4 +126,40 @@ public String visitExprFalso(MiLenguajeParser.ExprFalsoContext ctx) {
         return simbolo.getTipo();
     }
 
+    @Override
+    public String visitExprAditiva(MiLenguajeParser.ExprAditivaContext ctx) {
+        String tipoIzq = visit(ctx.expresion(0));
+        String tipoDer = visit(ctx.expresion(1));
+        int linea = ctx.getStart().getLine();
+        return tipoResultadoAritmetico(tipoIzq, tipoDer, linea);
+    }
+
+    @Override
+    public String visitExprMultiplicativa(MiLenguajeParser.ExprMultiplicativaContext ctx) {
+        String tipoIzq = visit(ctx.expresion(0));
+        String tipoDer = visit(ctx.expresion(1));
+        int linea = ctx.getStart().getLine();
+        return tipoResultadoAritmetico(tipoIzq, tipoDer, linea);
+    }
+
+    private String tipoResultadoAritmetico(String tipoIzq, String tipoDer, int linea) {
+        if (tipoIzq == null || tipoDer == null) {
+            return null; // ya hubo un error antes, no seguir arrastrando
+        }
+
+        boolean izqNumerico = tipoIzq.equals("int") || tipoIzq.equals("double") || tipoIzq.equals("char");
+        boolean derNumerico = tipoDer.equals("int") || tipoDer.equals("double") || tipoDer.equals("char");
+
+        if (!izqNumerico || !derNumerico) {
+            errores.add("Línea " + linea + ": operación aritmética inválida entre tipos '"
+                       + tipoIzq + "' y '" + tipoDer + "'.");
+            return null;
+        }
+
+        if (tipoIzq.equals("double") || tipoDer.equals("double")) {
+            return "double";
+        }
+
+        return "int";
+    }
 }
