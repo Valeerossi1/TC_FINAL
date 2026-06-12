@@ -68,7 +68,13 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
             return;
         }
 
-      
+        // bool -> int: en C++ un resultado booleano (comparacion, &&, ||, etc.)
+        // se promueve a int (true = 1, false = 0).
+        if (tipoVar.equals("int") && tipoExpr.equals("bool")) {
+            return;
+        }
+
+
         boolean varEsIntOCarCar = tipoVar.equals("int") || tipoVar.equals("char");
         boolean exprEsIntOCarCar = tipoExpr.equals("int") || tipoExpr.equals("char");
         if (varEsIntOCarCar && exprEsIntOCarCar) {

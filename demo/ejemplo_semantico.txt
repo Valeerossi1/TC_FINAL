@@ -1,0 +1,43 @@
+// ============================================================
+// ejemplo_semantico.txt — Pruebas de ANALISIS SEMANTICO
+// Cada bloque muestra un caso distinto: OK, ERROR o WARNING.
+// ============================================================
+
+// --- Declaraciones validas ---
+int a = 10;
+double pi = 3.14;
+char letra = 'x';
+
+// --- Ampliacion valida: int -> double (OK) ---
+double copia = a;
+
+// --- WARNING: truncamiento double -> int ---
+int truncado = 3.99;
+
+// --- ERROR: redeclaracion ---
+int a = 20;
+
+// --- ERROR: variable no declarada ---
+int desconocido = noExiste + 1;
+
+// --- ERROR: tipos incompatibles en declaracion ---
+int textoComoInt = "hola";
+int boolComoInt = true;
+
+// --- Operadores aritmeticos validos ---
+int suma = a + truncado;
+double mezcla = a + pi;
+
+// --- ERROR: operacion aritmetica invalida (bool + int) ---
+int operacionInvalida = true + 1;
+
+// --- Comparaciones y logicos validos ---
+cout << (a > pi);
+cout << (a > 0 && pi < 100.0);
+cout << (letra == 'x');
+
+// --- ERROR: comparacion invalida (string vs int) ---
+cout << ("hola" > a);
+
+// --- ERROR: AND con operandos no booleanos ---
+cout << (a && pi);

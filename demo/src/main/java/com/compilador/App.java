@@ -164,11 +164,49 @@ public class App {
                 System.out.println("  Pista: revisa que cada sentencia:");
                 System.out.println("    - Termine con punto y coma ';'");
                 System.out.println("    - Tenga paréntesis balanceados");
-                System.out.println("    - Use tipos válidos (int, float, string, bool, char, double)");
+                System.out.println("    - Use tipos válidos (int, char, double, void)");
                 return;
             }
 
             System.out.println("  ✅ Análisis sintáctico completado sin errores.");
+
+            // =========================================================
+            //  FASE 3: ANÁLISIS SEMÁNTICO
+            //
+            //  El SemanticVisitor recorre el MISMO árbol de parseo,
+            //  pero esta vez verificando reglas de SIGNIFICADO:
+            //    - ¿Las variables están declaradas antes de usarse?
+            //    - ¿Los tipos son compatibles (asignaciones, operaciones)?
+            //    - ¿Hay variables redeclaradas?
+            //
+            //  visit() dispara la recorrida: por cada nodo, ANTLR llama
+            //  al método visitXxx que sobreescribimos en SemanticVisitor.
+            // =========================================================
+
+            System.out.println("\n=== FASE 3: ANÁLISIS SEMÁNTICO ===\n");
+
+            SemanticVisitor analizadorSemantico = new SemanticVisitor();
+            analizadorSemantico.visit(arbolParseo);
+
+            List<String> erroresSemanticos = analizadorSemantico.getErrores();
+            List<String> warningsSemanticos = analizadorSemantico.getWarnings();
+
+            if (!erroresSemanticos.isEmpty()) {
+                System.out.println("  ❌ ERRORES SEMÁNTICOS:");
+                for (String error : erroresSemanticos) {
+                    System.out.println("    " + error);
+                }
+            } else {
+                System.out.println("  ✅ No se encontraron errores semánticos.");
+            }
+
+            if (!warningsSemanticos.isEmpty()) {
+                System.out.println();
+                System.out.println("  ⚠️  WARNINGS:");
+                for (String warning : warningsSemanticos) {
+                    System.out.println("    " + warning);
+                }
+            }
 
             System.out.println("\n" + "=".repeat(65));
             System.out.println("  Compilacion exitosa.");

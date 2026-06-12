@@ -159,50 +159,11 @@ bloque
 
 expresion
     //------------------------------------------------------------------
-    // Nivel 6 — OR lógico (menor precedencia de todos)
-    // a || b : verdadero si al menos uno es verdadero
-    : expresion OR expresion                                              # exprOr
-
-    //------------------------------------------------------------------
-    // Nivel 5 — AND lógico
-    // a && b : verdadero solo si ambos son verdaderos
-    | expresion AND expresion                                             # exprAnd
-
-    //------------------------------------------------------------------
-    // Nivel 4 — Igualdad y desigualdad
-    // a == b : comprueba si son iguales
-    // a != b : comprueba si son distintos
-    | expresion (EQL | DISTINTO) expresion                               # exprIgualdad
-
-    //------------------------------------------------------------------
-    // Nivel 3 — Comparaciones relacionales
-    // a > b, a < b, a >= b, a <= b
-    | expresion (MAYOR | MENOR | MAYOR_IGUAL | MENOR_IGUAL) expresion   # exprRelacional
-
-    //------------------------------------------------------------------
-    // Nivel 2 — Suma y resta
-    // a + b, a - b
-    | expresion (SUM | RES) expresion                                    # exprAditiva
-
-    //------------------------------------------------------------------
-    // Nivel 1 — Multiplicación, división, módulo (mayor precedencia binaria)
-    // a * b, a / b, a % b
-    | expresion (MUL | DIV | MOD) expresion                             # exprMultiplicativa
-
-    //------------------------------------------------------------------
-    // Operadores UNARIOS (actúan sobre un solo operando)
-    // !verdadero  →  falso
-    | NOT expresion                                                       # exprNot
-
-    // -5, -(x + 1)
-    | RES expresion                                                       # exprNegativo
-
-    //------------------------------------------------------------------
     // EXPRESIONES PRIMARIAS (mayor precedencia — se evalúan primero)
 
     // Paréntesis: agrupan y fuerzan el orden de evaluación
     // (2 + 3) * 4  →  20
-    | PA expresion PC                                                     # exprAgrupada
+    : PA expresion PC                                                     # exprAgrupada
 
     // Literales numéricos
     | INTEGER                                                             # exprEntero
@@ -220,6 +181,45 @@ expresion
 
     | llamadaFuncion                                                      # exprLlamada
     | ID                                                                  # exprIdentificador
+
+    //------------------------------------------------------------------
+    // Operadores UNARIOS (actúan sobre un solo operando)
+    // !verdadero  →  falso
+    | NOT expresion                                                       # exprNot
+
+    // -5, -(x + 1)
+    | RES expresion                                                       # exprNegativo
+
+    //------------------------------------------------------------------
+    // Nivel 1 — Multiplicación, división, módulo (mayor precedencia binaria)
+    // a * b, a / b, a % b
+    | expresion (MUL | DIV | MOD) expresion                             # exprMultiplicativa
+
+    //------------------------------------------------------------------
+    // Nivel 2 — Suma y resta
+    // a + b, a - b
+    | expresion (SUM | RES) expresion                                    # exprAditiva
+
+    //------------------------------------------------------------------
+    // Nivel 3 — Comparaciones relacionales
+    // a > b, a < b, a >= b, a <= b
+    | expresion (MAYOR | MENOR | MAYOR_IGUAL | MENOR_IGUAL) expresion   # exprRelacional
+
+    //------------------------------------------------------------------
+    // Nivel 4 — Igualdad y desigualdad
+    // a == b : comprueba si son iguales
+    // a != b : comprueba si son distintos
+    | expresion (EQL | DISTINTO) expresion                               # exprIgualdad
+
+    //------------------------------------------------------------------
+    // Nivel 5 — AND lógico
+    // a && b : verdadero solo si ambos son verdaderos
+    | expresion AND expresion                                             # exprAnd
+
+    //------------------------------------------------------------------
+    // Nivel 6 — OR lógico (menor precedencia de todos)
+    // a || b : verdadero si al menos uno es verdadero
+    | expresion OR expresion                                              # exprOr
 
     ;
 
