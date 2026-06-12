@@ -208,6 +208,20 @@ public class App {
                 }
             }
 
+            // FASE 4: generamos el codigo de tres direcciones (TAC) si no hubo errores semanticos
+            if (erroresSemanticos.isEmpty()) {
+                System.out.println("\n=== FASE 4: CODIGO INTERMEDIO (TAC) ===\n");
+
+                CodigoIntermedioVisitor generadorTAC = new CodigoIntermedioVisitor();
+                generadorTAC.visit(arbolParseo);
+
+                for (String instruccion : generadorTAC.getCodigo()) {
+                    System.out.println("    " + instruccion);
+                }
+            } else {
+                System.out.println("\n  No se genera codigo intermedio porque hay errores semanticos.");
+            }
+
             System.out.println("\n" + "=".repeat(65));
             System.out.println("  Compilacion exitosa.");
 

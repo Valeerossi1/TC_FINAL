@@ -4,6 +4,7 @@ package com.compilador;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
@@ -14,6 +15,9 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
     
     private List<String> errores = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
+
+    // tipo de retorno de la funcion que se esta visitando, para chequear los return
+    private String tipoRetornoActual = null;
 
    
     public List<String> getErrores() {
@@ -98,6 +102,112 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
 
         tabla.cerrarAmbito();
         return null;
+    }
+
+    @Override
+    public String visitDeclaracionFuncion(MiLenguajeParser.DeclaracionFuncionContext ctx) {
+        String tipoRetorno = ctx.tipo().getText();
+        String nombre = ctx.ID().getText();
+        int linea = ctx.ID().getSymbol().getLine();
+
+        List<String> tiposParams = new ArrayList<>();
+        if (ctx.parametros() != null) {
+            for (MiLenguajeParser.TipoContext t : ctx.parametros().tipo()) {
+                tiposParams.add(t.getText());
+            }
+        }
+
+        Simbolo funcion = new Simbolo(nombre, tipoRetorno, Simbolo.Categoria.FUNCION);
+        funcion.setParametros(tiposParams);
+        if (!tabla.declarar(funcion)) {
+            errores.add("Línea " + linea + ": '" + nombre + "' ya fue declarado en este ámbito.");
+        }
+
+        // guardamos el tipo de retorno actual para que sentenciaReturn lo pueda chequear
+        String tipoRetornoAnterior = tipoRetornoActual;
+        tipoRetornoActual = tipoRetorno;
+
+        // el cuerpo de la funcion es un ambito nuevo, ahi entran los parametros
+        tabla.abrirAmbito();
+        if (ctx.parametros() != null) {
+            List<MiLenguajeParser.TipoContext> tipos = ctx.parametros().tipo();
+            List<TerminalNode> ids = ctx.parametros().ID();
+            for (int i = 0; i < ids.size(); i++) {
+                tabla.declarar(new Simbolo(ids.get(i).getText(), tipos.get(i).getText(), Simbolo.Categoria.VARIABLE));
+            }
+        }
+        for (MiLenguajeParser.SentenciaContext s : ctx.bloque().sentencia()) {
+            visit(s);
+        }
+        tabla.cerrarAmbito();
+
+        tipoRetornoActual = tipoRetornoAnterior;
+        return null;
+    }
+
+    @Override
+    public String visitSentenciaReturn(MiLenguajeParser.SentenciaReturnContext ctx) {
+        int linea = ctx.getStart().getLine();
+        String tipoRetorno = (tipoRetornoActual == null) ? "void" : tipoRetornoActual;
+
+        if (ctx.expresion() == null) {
+            if (!tipoRetorno.equals("void")) {
+                errores.add("Línea " + linea + ": falta el valor de retorno, la función es de tipo '" + tipoRetorno + "'.");
+            }
+            return null;
+        }
+
+        String tipoExpr = visit(ctx.expresion());
+        if (tipoExpr == null) {
+            return null;
+        }
+
+        if (tipoRetorno.equals("void")) {
+            errores.add("Línea " + linea + ": una función 'void' no puede retornar un valor.");
+            return null;
+        }
+
+        compararTipos(tipoRetorno, tipoExpr, linea);
+        return null;
+    }
+
+    @Override
+    public String visitExprLlamada(MiLenguajeParser.ExprLlamadaContext ctx) {
+        return visit(ctx.llamadaFuncion());
+    }
+
+    @Override
+    public String visitLlamadaFuncion(MiLenguajeParser.LlamadaFuncionContext ctx) {
+        String nombre = ctx.ID().getText();
+        int linea = ctx.ID().getSymbol().getLine();
+
+        Simbolo funcion = tabla.buscar(nombre);
+        if (funcion == null || funcion.getCategoria() != Simbolo.Categoria.FUNCION) {
+            errores.add("Línea " + linea + ": '" + nombre + "' no es una función declarada.");
+            return null;
+        }
+
+        List<MiLenguajeParser.ExpresionContext> args = (ctx.argumentos() != null)
+            ? ctx.argumentos().expresion() : new ArrayList<>();
+
+        List<String> tiposArgs = new ArrayList<>();
+        for (MiLenguajeParser.ExpresionContext arg : args) {
+            tiposArgs.add(visit(arg));
+        }
+
+        List<String> tiposEsperados = funcion.getParametros();
+        if (tiposArgs.size() != tiposEsperados.size()) {
+            errores.add("Línea " + linea + ": '" + nombre + "' espera " + tiposEsperados.size()
+                       + " argumento(s), se encontraron " + tiposArgs.size() + ".");
+        } else {
+            for (int i = 0; i < tiposArgs.size(); i++) {
+                if (tiposArgs.get(i) != null) {
+                    compararTipos(tiposEsperados.get(i), tiposArgs.get(i), linea);
+                }
+            }
+        }
+
+        return funcion.getTipo();
     }
 
       @Override

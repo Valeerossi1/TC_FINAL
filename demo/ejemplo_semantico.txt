@@ -73,3 +73,22 @@ if (sombra > 0) {
     int soloInterna = 99;
 }
 cout << soloInterna;
+
+// --- Funciones ---
+
+// --- OK: funcion con parametros, llamada y return correctos ---
+int sumarDos(int x, int y) {
+    return x + y;
+}
+int resultadoSuma = sumarDos(a, truncado);
+
+// --- ERROR: cantidad de argumentos distinta a la declarada ---
+int otroResultado = sumarDos(a);
+
+// --- ERROR: funcion no declarada ---
+int faltante = noExisteFuncion(a);
+
+// --- ERROR: return de tipo incompatible ---
+int devuelveMal(int x) {
+    return "hola";
+}

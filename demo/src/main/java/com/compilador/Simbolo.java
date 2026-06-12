@@ -1,5 +1,7 @@
 package com.compilador;
 
+import java.util.List;
+
 public class Simbolo {
 
     // Un símbolo puede ser una VARIABLE o una FUNCIÓN.
@@ -18,6 +20,7 @@ public class Simbolo {
     private String nombre;       // ej: "x", "sumar"
     private String tipo;         // ej: "int", "double", "void"
     private Categoria categoria; // VARIABLE o FUNCION
+    private List<String> parametros; // solo para FUNCION: tipos de cada parametro en orden
 
     // Constructor: se usa para crear un símbolo nuevo
     // Ejemplo de uso: new Simbolo("x", "int", Categoria.VARIABLE)
@@ -37,6 +40,14 @@ public class Simbolo {
 
     public Categoria getCategoria() {
         return categoria;
+    }
+
+    public List<String> getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(List<String> parametros) {
+        this.parametros = parametros;
     }
 
     @Override
