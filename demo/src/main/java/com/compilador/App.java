@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 
 /**
  * Punto de entrada del compilador educativo.
@@ -99,7 +102,7 @@ public class App {
                 return;
             }
 
-            System.out.println("\n  ✅ Análisis léxico completado sin errores.");
+            System.out.println(Colores.VERDE + "\n  ✅ Análisis léxico completado sin errores." + Colores.RESET);
 
             // =========================================================
             //  FASE 2: ANÁLISIS SINTÁCTICO (PARSING)
@@ -156,10 +159,11 @@ public class App {
 
             // Verificar si hubo errores
             if (!erroresSintacticos.isEmpty()) {
-                System.out.println("  ❌ ERRORES SINTÁCTICOS:");
-                for (String error : erroresSintacticos) {
-                    System.out.println(error);
-                }
+                 System.out.println(Colores.ROJO + "  ❌ ERRORES SINTÁCTICOS:");
+               for (String error : erroresSintacticos) {
+                   System.out.println(error);
+               }
+               System.out.println(Colores.RESET);
                 System.out.println();
                 System.out.println("  Pista: revisa que cada sentencia:");
                 System.out.println("    - Termine con punto y coma ';'");
@@ -167,8 +171,10 @@ public class App {
                 System.out.println("    - Use tipos válidos (int, char, double, void)");
                 return;
             }
+            
+            System.out.println(Colores.VERDE + "  ✅ Análisis sintáctico completado sin errores." + Colores.RESET);
 
-            System.out.println("  ✅ Análisis sintáctico completado sin errores.");
+           
 
             // =========================================================
             //  FASE 3: ANÁLISIS SEMÁNTICO
