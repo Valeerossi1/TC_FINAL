@@ -41,3 +41,20 @@ cout << ("hola" > a);
 
 // --- ERROR: AND con operandos no booleanos ---
 cout << (a && pi);
+
+// --- Operadores unarios y parentesis ---
+
+// --- OK: '-' sobre char se promueve a int (C++: -'x' es int) ---
+int negChar = -letra;
+
+// --- OK: '!' sobre numerico es valido, el resultado es bool ---
+cout << !a;
+
+// --- ERROR: parentesis ahora propagan el tipo interno (antes se ignoraba) ---
+int agrupado = ("hola");
+
+// --- ERROR: '-' (negativo) requiere un operando numerico ---
+int negativoInvalido = -"hola";
+
+// --- ERROR: '!' requiere un operando booleano o numerico ---
+cout << !"hola";
