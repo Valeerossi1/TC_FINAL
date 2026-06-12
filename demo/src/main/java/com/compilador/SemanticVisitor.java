@@ -19,7 +19,13 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
     // tipo de retorno de la funcion que se esta visitando, para chequear los return
     private String tipoRetornoActual = null;
 
-   
+    // lista de todos los simbolos declarados, en orden, para imprimir la tabla al final
+    private List<Simbolo> tablaCompleta = new ArrayList<>();
+
+    // nombre del ambito actual ("global" o el nombre de la funcion que se esta visitando)
+    private String ambitoActual = "global";
+
+
     public List<String> getErrores() {
         return errores;
     }
@@ -28,19 +34,29 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
         return warnings;
     }
 
+    public List<Simbolo> getTablaCompleta() {
+        return tablaCompleta;
+    }
+
       
    @Override
     public String visitDeclaracion(MiLenguajeParser.DeclaracionContext ctx) {
         String tipoVar = ctx.tipo().getText();
         String nombre  = ctx.ID().getText();
         int linea = ctx.ID().getSymbol().getLine();
+        int columna = ctx.ID().getSymbol().getCharPositionInLine();
 
         Simbolo simbolo = new Simbolo(nombre, tipoVar, Simbolo.Categoria.VARIABLE);
+        simbolo.setLinea(linea);
+        simbolo.setColumna(columna);
+        simbolo.setAmbito(ambitoActual);
         boolean pudoDeclarar = tabla.declarar(simbolo);
 
         if (!pudoDeclarar) {
             errores.add("Línea " + linea + ": la variable '" + nombre
                        + "' ya fue declarada en este ámbito.");
+        } else {
+            tablaCompleta.add(simbolo);
         }
 
         // Si tiene valor inicial, chequear que el tipo sea compatible
@@ -109,6 +125,7 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
         String tipoRetorno = ctx.tipo().getText();
         String nombre = ctx.ID().getText();
         int linea = ctx.ID().getSymbol().getLine();
+        int columna = ctx.ID().getSymbol().getCharPositionInLine();
 
         List<String> tiposParams = new ArrayList<>();
         if (ctx.parametros() != null) {
@@ -119,13 +136,22 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
 
         Simbolo funcion = new Simbolo(nombre, tipoRetorno, Simbolo.Categoria.FUNCION);
         funcion.setParametros(tiposParams);
+        funcion.setLinea(linea);
+        funcion.setColumna(columna);
+        funcion.setAmbito(ambitoActual);
         if (!tabla.declarar(funcion)) {
             errores.add("Línea " + linea + ": '" + nombre + "' ya fue declarado en este ámbito.");
+        } else {
+            tablaCompleta.add(funcion);
         }
 
         // guardamos el tipo de retorno actual para que sentenciaReturn lo pueda chequear
         String tipoRetornoAnterior = tipoRetornoActual;
         tipoRetornoActual = tipoRetorno;
+
+        // a partir de aca estamos "dentro" de esta funcion
+        String ambitoAnterior = ambitoActual;
+        ambitoActual = nombre;
 
         // el cuerpo de la funcion es un ambito nuevo, ahi entran los parametros
         tabla.abrirAmbito();
@@ -133,7 +159,12 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
             List<MiLenguajeParser.TipoContext> tipos = ctx.parametros().tipo();
             List<TerminalNode> ids = ctx.parametros().ID();
             for (int i = 0; i < ids.size(); i++) {
-                tabla.declarar(new Simbolo(ids.get(i).getText(), tipos.get(i).getText(), Simbolo.Categoria.VARIABLE));
+                Simbolo parametro = new Simbolo(ids.get(i).getText(), tipos.get(i).getText(), Simbolo.Categoria.PARAMETRO);
+                parametro.setLinea(ids.get(i).getSymbol().getLine());
+                parametro.setColumna(ids.get(i).getSymbol().getCharPositionInLine());
+                parametro.setAmbito(ambitoActual);
+                tabla.declarar(parametro);
+                tablaCompleta.add(parametro);
             }
         }
         for (MiLenguajeParser.SentenciaContext s : ctx.bloque().sentencia()) {
@@ -141,6 +172,7 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
         }
         tabla.cerrarAmbito();
 
+        ambitoActual = ambitoAnterior;
         tipoRetornoActual = tipoRetornoAnterior;
         return null;
     }

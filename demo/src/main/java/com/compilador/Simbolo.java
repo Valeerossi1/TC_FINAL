@@ -11,7 +11,8 @@ public class Simbolo {
     // como sí podría pasar si usáramos un String.
     public enum Categoria {
         VARIABLE,
-        FUNCION
+        FUNCION,
+        PARAMETRO
     }
 
 
@@ -19,8 +20,13 @@ public class Simbolo {
     // Datos que guarda cada símbolo:
     private String nombre;       // ej: "x", "sumar"
     private String tipo;         // ej: "int", "double", "void"
-    private Categoria categoria; // VARIABLE o FUNCION
+    private Categoria categoria; // VARIABLE, FUNCION o PARAMETRO
     private List<String> parametros; // solo para FUNCION: tipos de cada parametro en orden
+
+    // datos extra para mostrar la tabla de simbolos
+    private int linea;
+    private int columna;
+    private String ambito; // "global" o el nombre de la funcion que la contiene
 
     // Constructor: se usa para crear un símbolo nuevo
     // Ejemplo de uso: new Simbolo("x", "int", Categoria.VARIABLE)
@@ -48,6 +54,30 @@ public class Simbolo {
 
     public void setParametros(List<String> parametros) {
         this.parametros = parametros;
+    }
+
+    public int getLinea() {
+        return linea;
+    }
+
+    public void setLinea(int linea) {
+        this.linea = linea;
+    }
+
+    public int getColumna() {
+        return columna;
+    }
+
+    public void setColumna(int columna) {
+        this.columna = columna;
+    }
+
+    public String getAmbito() {
+        return ambito;
+    }
+
+    public void setAmbito(String ambito) {
+        this.ambito = ambito;
     }
 
     @Override
