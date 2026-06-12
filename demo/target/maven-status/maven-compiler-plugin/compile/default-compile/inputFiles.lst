@@ -1,9 +1,9 @@
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\MiLenguajeLexer.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\MiLenguajeParser.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\ImprimirVisitor.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\Simbolo.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\MiLenguajeBaseVisitor.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\App.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\MiLenguajeVisitor.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\SemanticVisitor.java
-C:\Users\Santi\tc final\TC_FINAL\demo\src\main\java\com\compilador\TablaSimbolos.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\MiLenguajeLexer.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\SemanticVisitor.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\MiLenguajeBaseVisitor.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\ImprimirVisitor.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\TablaSimbolos.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\App.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\MiLenguajeParser.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\Simbolo.java
+C:\Users\vale2\OneDrive\Documents\FACULTAD\UBP\5to\Primersemestre\tc_final\TecnicasDeCompilacion\demo\src\main\java\com\compilador\MiLenguajeVisitor.java
