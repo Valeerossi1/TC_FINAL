@@ -171,7 +171,7 @@ public class App {
                 System.out.println("    - Use tipos válidos (int, char, double, void)");
                 return;
             }
-            
+
             System.out.println(Colores.VERDE + "  ✅ Análisis sintáctico completado sin errores." + Colores.RESET);
 
            
@@ -196,23 +196,28 @@ public class App {
 
             List<String> erroresSemanticos = analizadorSemantico.getErrores();
             List<String> warningsSemanticos = analizadorSemantico.getWarnings();
-
+              
             if (!erroresSemanticos.isEmpty()) {
-                System.out.println("  ❌ ERRORES SEMÁNTICOS:");
-                for (String error : erroresSemanticos) {
-                    System.out.println("    " + error);
-                }
-            } else {
-                System.out.println("  ✅ No se encontraron errores semánticos.");
-            }
+               System.out.println(Colores.ROJO + "  ❌ ERRORES SEMÁNTICOS:");
+               for (String error : erroresSemanticos) {
+                   System.out.println("    " + error);
+               }
+               System.out.println(Colores.RESET);
+           } else {
+               System.out.println(Colores.VERDE + "  ✅ No se encontraron errores semánticos." + Colores.RESET);
+           }
+
+            
 
             if (!warningsSemanticos.isEmpty()) {
-                System.out.println();
-                System.out.println("  ⚠️  WARNINGS:");
-                for (String warning : warningsSemanticos) {
-                    System.out.println("    " + warning);
-                }
-            }
+               System.out.println();
+               System.out.println(Colores.AMARILLO + "  ⚠️  WARNINGS:");
+               for (String warning : warningsSemanticos) {
+                   System.out.println("    " + warning);
+               }
+               System.out.println(Colores.RESET);
+           }
+
 
             // FASE 4: generamos el codigo de tres direcciones (TAC) si no hubo errores semanticos
             List<String> codigoIntermedio = new ArrayList<>();
@@ -240,12 +245,20 @@ public class App {
 
                 System.out.println("\n  (" + codigoIntermedio.size() + " instrucciones -> "
                                   + codigoOptimizado.size() + " tras optimizar)");
+
+                String nombreBase = args[0].replaceAll("\\.[^.]+$", "");
+                Files.write(Paths.get(nombreBase + "_tac.txt"), codigoIntermedio);
+                Files.write(Paths.get(nombreBase + "_optimizado.txt"), codigoOptimizado);
+
+                System.out.println("\n  Codigo intermedio guardado en: " + nombreBase + "_tac.txt");
+                System.out.println("  Codigo optimizado guardado en: " + nombreBase + "_optimizado.txt");                  
             } else {
                 System.out.println("\n  No se genera codigo intermedio porque hay errores semanticos.");
             }
 
             System.out.println("\n" + "=".repeat(65));
-            System.out.println("  Compilacion exitosa.");
+            System.out.println(Colores.VERDE + "  Compilacion exitosa." + Colores.RESET);
+
 
             // =========================================================
             //  VISUALIZADOR GRÁFICO (Swing)
