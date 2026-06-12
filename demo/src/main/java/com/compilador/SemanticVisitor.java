@@ -88,6 +88,12 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
     }
 
       @Override
+public String visitExprAgrupada(MiLenguajeParser.ExprAgrupadaContext ctx) {
+    // Los paréntesis solo agrupan: el tipo de (expr) es el tipo de expr.
+    return visit(ctx.expresion());
+}
+
+@Override
 public String visitExprEntero(MiLenguajeParser.ExprEnteroContext ctx) {
     return "int";
 }
@@ -130,6 +136,49 @@ public String visitExprFalso(MiLenguajeParser.ExprFalsoContext ctx) {
         }
 
         return simbolo.getTipo();
+    }
+
+    @Override
+    public String visitExprNegativo(MiLenguajeParser.ExprNegativoContext ctx) {
+        String tipo = visit(ctx.expresion());
+        int linea = ctx.getStart().getLine();
+
+        if (tipo == null) {
+            return null; // ya hubo un error antes, no seguir arrastrando
+        }
+
+        boolean esNumerico = tipo.equals("int") || tipo.equals("double") || tipo.equals("char");
+        if (!esNumerico) {
+            errores.add("Línea " + linea + ": el operador '-' (negativo) requiere un operando "
+                       + "numérico, pero se encontró '" + tipo + "'.");
+            return null;
+        }
+
+        // char se promueve a int al aplicar '-', igual que en C++ (-'a' es int)
+        if (tipo.equals("char")) {
+            return "int";
+        }
+        return tipo;
+    }
+
+    @Override
+    public String visitExprNot(MiLenguajeParser.ExprNotContext ctx) {
+        String tipo = visit(ctx.expresion());
+        int linea = ctx.getStart().getLine();
+
+        if (tipo == null) {
+            return null; // ya hubo un error antes, no seguir arrastrando
+        }
+
+        boolean esValido = tipo.equals("bool") || tipo.equals("int")
+                          || tipo.equals("double") || tipo.equals("char");
+        if (!esValido) {
+            errores.add("Línea " + linea + ": el operador '!' requiere un operando booleano "
+                       + "o numérico, pero se encontró '" + tipo + "'.");
+            return null;
+        }
+
+        return "bool";
     }
 
     @Override
