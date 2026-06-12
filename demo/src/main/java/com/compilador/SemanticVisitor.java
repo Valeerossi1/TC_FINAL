@@ -87,6 +87,19 @@ public class SemanticVisitor extends MiLenguajeBaseVisitor<String> {
                    + tipoVar + "'.");
     }
 
+    @Override
+    public String visitBloque(MiLenguajeParser.BloqueContext ctx) {
+        // nuevo ambito por cada bloque, las variables de adentro no se ven afuera
+        tabla.abrirAmbito();
+
+        for (MiLenguajeParser.SentenciaContext sentencia : ctx.sentencia()) {
+            visit(sentencia);
+        }
+
+        tabla.cerrarAmbito();
+        return null;
+    }
+
       @Override
 public String visitExprAgrupada(MiLenguajeParser.ExprAgrupadaContext ctx) {
     // Los paréntesis solo agrupan: el tipo de (expr) es el tipo de expr.

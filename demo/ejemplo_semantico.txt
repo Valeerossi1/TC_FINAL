@@ -58,3 +58,18 @@ int negativoInvalido = -"hola";
 
 // --- ERROR: '!' requiere un operando booleano o numerico ---
 cout << !"hola";
+
+// --- Ambitos anidados ---
+
+// --- OK: shadowing, no es redeclaracion porque es otro ambito ---
+int sombra = 1;
+if (sombra > 0) {
+    int sombra = 2;
+    cout << sombra;
+}
+
+// --- ERROR: soloInterna no existe afuera del bloque ---
+if (sombra > 0) {
+    int soloInterna = 99;
+}
+cout << soloInterna;
