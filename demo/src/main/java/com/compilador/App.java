@@ -209,15 +209,31 @@ public class App {
             }
 
             // FASE 4: generamos el codigo de tres direcciones (TAC) si no hubo errores semanticos
+            List<String> codigoIntermedio = new ArrayList<>();
+
             if (erroresSemanticos.isEmpty()) {
                 System.out.println("\n=== FASE 4: CODIGO INTERMEDIO (TAC) ===\n");
 
                 CodigoIntermedioVisitor generadorTAC = new CodigoIntermedioVisitor();
                 generadorTAC.visit(arbolParseo);
+                codigoIntermedio = generadorTAC.getCodigo();
 
-                for (String instruccion : generadorTAC.getCodigo()) {
+                for (String instruccion : codigoIntermedio) {
                     System.out.println("    " + instruccion);
                 }
+
+                // FASE 5: optimizamos ese mismo TAC (plegado, copias, saltos y codigo muerto)
+                System.out.println("\n=== FASE 5: CODIGO OPTIMIZADO ===\n");
+
+                Optimizador optimizador = new Optimizador();
+                List<String> codigoOptimizado = optimizador.optimizar(codigoIntermedio);
+
+                for (String instruccion : codigoOptimizado) {
+                    System.out.println("    " + instruccion);
+                }
+
+                System.out.println("\n  (" + codigoIntermedio.size() + " instrucciones -> "
+                                  + codigoOptimizado.size() + " tras optimizar)");
             } else {
                 System.out.println("\n  No se genera codigo intermedio porque hay errores semanticos.");
             }
