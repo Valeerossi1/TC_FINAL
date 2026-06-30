@@ -1,13 +1,27 @@
 package com.compilador;
 
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.*;
-import org.antlr.v4.gui.TreeViewer;
-import javax.swing.*;
-import java.util.Arrays;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.antlr.v4.gui.TreeViewer;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
+
 
 /**
  * Punto de entrada del compilador educativo.
@@ -40,9 +54,7 @@ public class App {
             //  El Lexer lee los caracteres del archivo y los agrupa
             //  en unidades con significado llamadas TOKENS.
             //
-            //  Ejemplo:
-            //    "int x = 5 + 3 ;" → [INT] [ID:x] [IGUAL] [INTEGER:5]
-            //                          [SUM] [INTEGER:3] [PYC]
+            // 
             // =========================================================
 
             MiLenguajeLexer lexer = new MiLenguajeLexer(input);
@@ -75,8 +87,10 @@ public class App {
                               "TIPO DE TOKEN", "LEXEMA", "LÍNEA", "COLUMNA");
             System.out.println("  " + "-".repeat(63));
 
+            int cantidadTokens = 0;
             for (Token token : tokens.getTokens()) {
                 if (token.getType() == Token.EOF) continue;
+                cantidadTokens++;
 
                 String tipo = MiLenguajeLexer.VOCABULARY.getSymbolicName(token.getType());
                 // Si el tipo es null, probablemente es OTRO (char no reconocido)
@@ -91,7 +105,7 @@ public class App {
 
             // Si hubo errores léxicos, reportar y detener
             if (!erroresLexicos.isEmpty()) {
-                System.out.println("\n  ❌ ERRORES LÉXICOS:");
+                System.out.println("\n   ERRORES LÉXICOS:");
                 for (String error : erroresLexicos) {
                     System.out.println(error);
                 }
@@ -99,7 +113,7 @@ public class App {
                 return;
             }
 
-            System.out.println("\n  ✅ Análisis léxico completado sin errores.");
+            System.out.println(Colores.VERDE + "\n   Análisis léxico completado sin errores." + Colores.RESET);
 
             // =========================================================
             //  FASE 2: ANÁLISIS SINTÁCTICO (PARSING)
@@ -110,17 +124,6 @@ public class App {
             //  Si la estructura es válida, construye un ÁRBOL DE PARSEO
             //  (Parse Tree) que representa la jerarquía del programa.
             //
-            //  Ejemplo para "int x = 5 + 3;":
-            //    programa
-            //      sentencia
-            //        declaracion
-            //          tipo: INT
-            //          ID: x
-            //          expresion
-            //            exprAditiva
-            //              exprEntero: 5
-            //              SUM
-            //              exprEntero: 3
             // =========================================================
 
             System.out.println("\n=== FASE 2: ANÁLISIS SINTÁCTICO ===\n");
@@ -156,41 +159,166 @@ public class App {
 
             // Verificar si hubo errores
             if (!erroresSintacticos.isEmpty()) {
-                System.out.println("  ❌ ERRORES SINTÁCTICOS:");
-                for (String error : erroresSintacticos) {
-                    System.out.println(error);
-                }
+                 System.out.println(Colores.ROJO + "   ERRORES SINTÁCTICOS:");
+               for (String error : erroresSintacticos) {
+                   System.out.println(error);
+               }
+               System.out.println(Colores.RESET);
                 System.out.println();
                 System.out.println("  Pista: revisa que cada sentencia:");
                 System.out.println("    - Termine con punto y coma ';'");
                 System.out.println("    - Tenga paréntesis balanceados");
-                System.out.println("    - Use tipos válidos (int, float, string, bool, char, double)");
+                System.out.println("    - Use tipos válidos (int, char, double, void)");
                 return;
             }
 
-            System.out.println("  ✅ Análisis sintáctico completado sin errores.");
+            System.out.println(Colores.VERDE + "   Análisis sintáctico completado sin errores." + Colores.RESET);
+
+           
+
+            // =========================================================
+            //  FASE 3: ANÁLISIS SEMÁNTICO
+            //
+            //  El SemanticVisitor recorre el MISMO árbol de parseo,
+            //  pero esta vez verificando reglas de SIGNIFICADO:
+            //    - ¿Las variables están declaradas antes de usarse?
+            //    - ¿Los tipos son compatibles (asignaciones, operaciones)?
+            //    - ¿Hay variables redeclaradas?
+            //
+            //
+            // =========================================================
+
+            System.out.println("\n=== FASE 3: ANÁLISIS SEMÁNTICO ===\n");
+
+            SemanticVisitor analizadorSemantico = new SemanticVisitor();
+            analizadorSemantico.visit(arbolParseo);
+
+            List<String> erroresSemanticos = analizadorSemantico.getErrores();
+            List<String> warningsSemanticos = analizadorSemantico.getWarnings();
+              
+            if (!erroresSemanticos.isEmpty()) {
+               System.out.println(Colores.ROJO + "   ERRORES SEMÁNTICOS:");
+               for (String error : erroresSemanticos) {
+                   System.out.println("    " + error);
+               }
+               System.out.println(Colores.RESET);
+           } else {
+               System.out.println(Colores.VERDE + "   No se encontraron errores semánticos." + Colores.RESET);
+           }
+
+            
+
+            if (!warningsSemanticos.isEmpty()) {
+               System.out.println();
+               System.out.println(Colores.AMARILLO + "    WARNINGS:");
+               for (String warning : warningsSemanticos) {
+                   System.out.println("    " + warning);
+               }
+               System.out.println(Colores.RESET);
+           }
+
+            // Tabla de simbolos: muestra todas las variables, parametros y funciones
+            // que se fueron declarando durante el analisis semantico
+            List<Simbolo> tablaSimbolos = analizadorSemantico.getTablaCompleta();
+            System.out.println("\n=== TABLA DE SIMBOLOS ===");
+            System.out.printf("%-16s%-11s%-16s%-11s%-11s%-16s%s%n",
+                "NOMBRE", "TIPO", "CATEGORIA", "LINEA", "COLUMNA", "AMBITO", "DETALLES");
+            System.out.println("-".repeat(90));
+            for (Simbolo simbolo : tablaSimbolos) {
+                String detalles = "";
+                if (simbolo.getCategoria() == Simbolo.Categoria.VARIABLE) {
+                    detalles = "[private]";
+                } else if (simbolo.getCategoria() == Simbolo.Categoria.FUNCION) {
+                    detalles = "[private] " + simbolo.getParametros();
+                }
+                System.out.printf("%-16s%-11s%-16s%-11d%-11d%-16s%s%n",
+                    simbolo.getNombre(), simbolo.getTipo(),
+                    simbolo.getCategoria().toString().toLowerCase(),
+                    simbolo.getLinea(), simbolo.getColumna(),
+                    simbolo.getAmbito(), detalles);
+            }
+
+
+            // FASE 4: generamos el codigo de tres direcciones (TAC) si no hubo errores semanticos
+            List<String> codigoIntermedio = new ArrayList<>();
+            List<String> codigoOptimizado = new ArrayList<>();
+
+            if (erroresSemanticos.isEmpty()) {
+                System.out.println("\n=== FASE 4: CODIGO INTERMEDIO (TAC) ===\n");
+
+                CodigoIntermedioVisitor generadorTAC = new CodigoIntermedioVisitor();
+                generadorTAC.visit(arbolParseo);
+                codigoIntermedio = generadorTAC.getCodigo();
+
+                for (String instruccion : codigoIntermedio) {
+                    System.out.println("    " + instruccion);
+                }
+
+                // FASE 5: optimizamos ese mismo TAC (plegado, copias, saltos y codigo muerto)
+                System.out.println("\n=== FASE 5: CODIGO OPTIMIZADO ===\n");
+
+                codigoOptimizado = new ArrayList<>(codigoIntermedio);
+                for (int ronda = 0; ronda < 5; ronda++) {
+                    boolean cambio = false;
+
+                    // comentar las optimizaciones que no se quieran aplicar
+                    cambio |= new PlegadoConstantes().aplicar(codigoOptimizado);
+                    cambio |= new PropagacionCopias().aplicar(codigoOptimizado);
+                    cambio |= new EliminacionSaltos().aplicar(codigoOptimizado);
+                    cambio |= new EliminacionCodigoMuerto().aplicar(codigoOptimizado);
+
+                    if (!cambio) break;
+                }
+
+                for (String instruccion : codigoOptimizado) {
+                    System.out.println("    " + instruccion);
+                }
+
+                System.out.println("\n  (" + codigoIntermedio.size() + " instrucciones -> "
+                                  + codigoOptimizado.size() + " tras optimizar)");
+
+                String nombreBase = args[0].replaceAll("\\.[^.]+$", "");
+                Files.write(Paths.get(nombreBase + "_tac.txt"), codigoIntermedio);
+                Files.write(Paths.get(nombreBase + "_optimizado.txt"), codigoOptimizado);
+
+                System.out.println("\n  Codigo intermedio guardado en: " + nombreBase + "_tac.txt");
+                System.out.println("  Codigo optimizado guardado en: " + nombreBase + "_optimizado.txt");                  
+            } else {
+                System.out.println("\n  No se genera codigo intermedio porque hay errores semanticos.");
+            }
+
+            // RESUMEN: un repaso rapido de todo lo que se proceso
+            System.out.println("\n=== RESUMEN DE COMPILACION ===");
+            System.out.println("  Archivo procesado: " + args[0]);
+            System.out.println("  Tokens analizados: " + cantidadTokens);
+            System.out.println("  Simbolos en tabla: " + tablaSimbolos.size());
+            if (erroresSemanticos.isEmpty()) {
+                System.out.println("  Instrucciones generadas: " + codigoIntermedio.size());
+                System.out.println("  Instrucciones optimizadas: " + codigoOptimizado.size());
+                double reduccion = 100.0 * (codigoIntermedio.size() - codigoOptimizado.size()) / codigoIntermedio.size();
+                System.out.printf("  Reduccion de codigo: %.2f%%%n", reduccion);
+            }
 
             System.out.println("\n" + "=".repeat(65));
-            System.out.println("  Compilacion exitosa.");
+            System.out.println(Colores.VERDE + "  Compilacion exitosa." + Colores.RESET);
+
 
             // =========================================================
             //  VISUALIZADOR GRÁFICO (Swing)
             //
             //  TreeViewer es la herramienta de depuración incluida en
             //  ANTLR4. Abre una ventana Swing con el árbol de parseo
-            //  completo, interactivo y con zoom.
             //
-            //  Se muestra DESPUÉS de la salida en consola para que
-            //  el alumno pueda leer primero la salida de texto.
+            //  Se muestra despues de la salida en consola
             // =========================================================
 
             System.out.println("\n  Abriendo visualizador grafico del arbol...");
             mostrarArbol(arbolParseo, parser);
 
         } catch (IOException e) {
-            System.err.println("❌ No se pudo leer el archivo: " + e.getMessage());
+            System.err.println(" No se pudo leer el archivo: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("❌ Error inesperado: " + e.getMessage());
+            System.err.println(" Error inesperado: " + e.getMessage());
             e.printStackTrace();
         }
     }

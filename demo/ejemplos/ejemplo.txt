@@ -6,11 +6,8 @@
 // --- Declaraciones de variables ---
 int x = 10;
 int y = 20;
-float pi = 3.14;
+double pi = 3.14;
 double temperatura = 36.6;
-bool activo = true;
-bool terminado = false;
-string nombre = "Juan";
 char inicial = 'J';
 
 // --- Variable sin valor inicial ---
@@ -34,7 +31,7 @@ int otro = x + (y * 3) - 1;
 // --- cout: salida por pantalla ---
 cout << x;
 cout << suma;
-cout << nombre;
+cout << inicial;
 cout << (x + y) * 2;
 
 // --- if simple ---
@@ -43,7 +40,7 @@ if (x > 10) {
 }
 
 // --- if con else ---
-if (activo) {
+if (x > 5) {
     cout << x;
 } else {
     cout << y;
@@ -61,17 +58,17 @@ while (x < 100) {
 }
 
 // --- while con condición compuesta ---
-while (x > 0 && activo) {
+while (x > 0 && x < 200) {
     x = x - 1;
     cout << x;
 }
 
 // --- Expresiones booleanas ---
-bool esPositivo = x > 0;
-bool enRango = x >= 0 && x <= 100;
-bool esCero = x == 0;
-bool noEsCero = x != 0;
-bool negacion = !activo;
+int esPositivo = x > 0;
+int enRango = x >= 0 && x <= 100;
+int esCero = x == 0;
+int noEsCero = x != 0;
+int negacion = !esPositivo;
 
 // --- Bloques anidados ---
 if (x > 0) {

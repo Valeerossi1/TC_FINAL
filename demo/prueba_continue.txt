@@ -1,2 +1,0 @@
-java -jar target/demo-1.0-jar-with-dependencies.jar prueba_break.txt
-java -jar target/demo-1.0-jar-with-dependencies.jar prueba_continue.txt

@@ -1,0 +1,58 @@
+// Archivo de prueba SIN errores - SÚPER SIMPLE
+// Adaptado a lo que soporta la gramática actual (sin bool, sin arrays)
+
+// Variables globales
+int contadorGlobal;
+double valorPi;
+char inicial;
+int activo;
+
+// Función simple que retorna valor
+int sumar(int a, int b) {
+    int resultado;
+    resultado = a + b;
+    contadorGlobal = contadorGlobal + 1;
+    return resultado;
+}
+
+// Función main
+int main() {
+    int estado;
+    int temp;
+    int numero0;
+    int numero1;
+    int numero2;
+
+    // Inicializar variables globales
+    contadorGlobal = 0;
+    valorPi = 3.14;
+    inicial = 'M';
+
+    // En lugar de array, usamos variables sueltas
+    numero0 = 10;
+    numero1 = 20;
+    numero2 = 30;
+
+    // Operaciones básicas
+    temp = numero0 + numero1;
+    temp = temp * 2;
+    temp = temp / 3;
+    temp = temp % 5;
+
+    // Usar función que retorna valor
+    estado = sumar(temp, 5);
+
+    // Usar variables globales
+    contadorGlobal = estado;
+    valorPi = temp;
+    inicial = 'X';
+
+    // Estructuras de control básicas
+    if (estado > 0) {
+        int auxiliar;
+        auxiliar = estado + 10;
+        estado = auxiliar;
+    }
+
+    return estado;
+}
